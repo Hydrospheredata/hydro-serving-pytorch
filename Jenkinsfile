@@ -100,6 +100,12 @@ node("JenkinsOnDemand") {
         sh "make PYTHON=python3 test"
     }
 
+    stage('Build docker images') {
+        imageVersion = currentVersion()
+        sh "make PYTHON=python3 image-cpu"
+        sh "docker tag hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu hydrosphere/serving-runtime-tensorflow:latest-cpu"
+    }
+
     if (isReleaseJob()) {
         if (currentBuild.result == 'UNSTABLE') {
             currentBuild.result = 'FAILURE'
@@ -108,8 +114,6 @@ node("JenkinsOnDemand") {
 
         stage('Build and push docker') {
             imageVersion = currentVersion()
-            sh "make PYTHON=python3 image-cpu"
-            sh "docker tag hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu hydrosphere/serving-runtime-tensorflow:latest-cpu"
             sh "docker push hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu"
         }
 
