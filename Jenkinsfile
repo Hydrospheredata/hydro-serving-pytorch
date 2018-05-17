@@ -103,7 +103,7 @@ node("JenkinsOnDemand") {
     stage('Build docker images') {
         imageVersion = currentVersion()
         sh "make PYTHON=python3 image-cpu"
-        sh "docker tag hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu hydrosphere/serving-runtime-tensorflow:latest-cpu"
+        sh "docker tag hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu hydrosphere/serving-runtime-pytorch:latest-cpu"
     }
 
     if (isReleaseJob()) {
