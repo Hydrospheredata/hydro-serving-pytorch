@@ -92,7 +92,7 @@ node("JenkinsOnDemand") {
     }
 
     stage('Test') {
-        sh "make test"
+        sh "make PYTHON=python3 test"
     }
 
     if (isReleaseJob()) {
@@ -103,6 +103,7 @@ node("JenkinsOnDemand") {
 
         stage('Build and push docker') {
             imageVersion = currentVersion()
+            sh "make PYTHON=python3 image-cpu"
             sh "docker tag hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu hydrosphere/serving-runtime-tensorflow:latest-cpu"
             sh "docker push hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu"
         }
