@@ -91,6 +91,11 @@ node("JenkinsOnDemand") {
         }
     }
 
+    stage('Prepare python environment') {
+        sh "sudo pip3 install --upgrade pip"
+        sh "sudo pip3 install setuptools==39.0.1"
+    }
+
     stage('Test') {
         sh "make PYTHON=python3 test"
     }
