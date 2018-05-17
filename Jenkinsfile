@@ -91,8 +91,19 @@ node("JenkinsOnDemand") {
         }
     }
 
+    stage('Prepare python environment') {
+        sh "sudo pip3 install --upgrade pip"
+        sh "sudo pip3 install setuptools==39.0.1"
+    }
+
     stage('Test') {
-        sh "make test"
+        sh "make PYTHON=python3 test"
+    }
+
+    stage('Build docker images') {
+        imageVersion = currentVersion()
+        sh "make PYTHON=python3 image-cpu"
+        sh "docker tag hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu hydrosphere/serving-runtime-tensorflow:latest-cpu"
     }
 
     if (isReleaseJob()) {
@@ -103,7 +114,6 @@ node("JenkinsOnDemand") {
 
         stage('Build and push docker') {
             imageVersion = currentVersion()
-            sh "docker tag hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu hydrosphere/serving-runtime-tensorflow:latest-cpu"
             sh "docker push hydrosphere/serving-runtime-pytorch:${imageVersion}-cpu"
         }
 
